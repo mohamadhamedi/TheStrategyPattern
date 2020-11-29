@@ -7,43 +7,25 @@ namespace TheStrategyPattern
 {
     public class OnlineCart
     {
+        public OnlineCart(ILogger logger)
+        {
+            this.logger = logger;
+
+            paymentStrategies = new Dictionary<PaymentType, IPaymentStrategy>();
+            paymentStrategies.Add(PaymentType.CredeitCard, new CreditCardPaymentStrategy(this.logger));
+            paymentStrategies.Add(PaymentType.GoogleCheckout, new GooglePaymentStrategy(this.logger));
+            paymentStrategies.Add(PaymentType.PayPal, new PaypalPaymentStrategy(this.logger));
+            paymentStrategies.Add(PaymentType.AmazonPayments, new AmazonPaymentStrategy(this.logger));
+        }
+        private IDictionary<PaymentType, IPaymentStrategy> paymentStrategies;
+        private readonly ILogger logger;
+
         public void Checkout(PaymentType paymentType)
         {
-            switch (paymentType)
-            {
-                case PaymentType.CredeitCard:
-                    ProcessCreditCardPayment();
-                    break;
-                case PaymentType.AmazonPayments:
-                    ProcessAmazonPayment();
-                    break;
-                case PaymentType.GoogleCheckout:
-                    ProcessGooglePayment();
-                    break;
-                case PaymentType.PayPal:
-                    ProcessPayPalPeyment();
-                    break;
-            }
+
+            paymentStrategies[paymentType].ProcessPayment();
         }
 
-        private void ProcessPayPalPeyment()
-        {
-            Console.WriteLine("PayPal Card payment chosen");
-        }
-
-        private void ProcessGooglePayment()
-        {
-            Console.WriteLine("Google payment chosen");
-        }
-
-        private void ProcessAmazonPayment()
-        {
-            Console.WriteLine("Amazon payment chosen");
-        }
-
-        private void ProcessCreditCardPayment()
-        {
-            Console.WriteLine("Credit card payment chosen");
-        }
+       
     }
 }
